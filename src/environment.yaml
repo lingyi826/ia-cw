@@ -1,0 +1,51 @@
+# Coursework world: 3 agents, 3 rooms and 1 task type.
+# Work damages shared rooms; maintenance competes with deadlines.
+# Enforcement and learning rewards are supplied separately.
+seed: 7
+world:
+  horizon: 240
+  task_damage: 2
+  clean_increase: 2
+  restore_steps: 48
+  inaccessible_cost: 0.1
+  work_cost: 0.02
+  clean_cost: 0.02
+  stop_when_all_locked: true
+  features: {}
+tasks:
+  work_required: 4
+  deadline: 16
+  spawn_probability: 0.7
+  initial_probability: 1.0
+  cooperation_probability: 0.5
+  cooperative_mode: simultaneous
+  reward: 2.0
+rooms:
+- id: office1
+  task_type: general
+  initial_cleanliness: 20
+  accessible_threshold: 1
+  features: {}
+- id: office2
+  task_type: general
+  initial_cleanliness: 20
+  accessible_threshold: 1
+  features: {}
+- id: office3
+  task_type: general
+  initial_cleanliness: 20
+  accessible_threshold: 1
+  features: {}
+agents:
+- id: alice
+  initial_room: office1
+  features:
+    role: generalist
+- id: bob
+  initial_room: office2
+  features:
+    role: generalist
+- id: carol
+  initial_room: office3
+  features:
+    role: generalist
