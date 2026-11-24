@@ -90,7 +90,20 @@ def main() -> None:
     parser.add_argument("--seed", type=int)
     parser.add_argument("--train-episodes", type=int, default=10)
     parser.add_argument("--episodes", type=int, default=1)
+    parser.add_argument(
+        "--qvalues-dir",
+        type=Path,
+        help="Load per-agent Q-values from DIR/<agent>.json before running.",
+    )
+    parser.add_argument(
+        "--save-qvalues-dir",
+        type=Path,
+        help="Save trained per-agent Q-values to DIR/<agent>.json.",
+    )
     args = parser.parse_args()
+
+    if args.agent != "qlearning" and (args.qvalues_dir or args.save_qvalues_dir):
+        parser.error("Q-value file options can only be used with --agent qlearning")
 
     # If no args.config, default to `environment.yaml`
     loaded = load_config(args.config)
@@ -107,7 +120,10 @@ def main() -> None:
         if args.agent == "random":
             policies[actor] = RandomAgent(loaded.scenario, seed=seed * 100 + index)
         elif args.agent == "qlearning":
-            policies[actor] = QLearningAgent(loaded.scenario, seed=seed * 100 + index)
+            policy = QLearningAgent(loaded.scenario, seed=seed * 100 + index)
+            if args.qvalues_dir is not None:
+                policy.load_values(args.qvalues_dir / f"{actor}.json")
+            policies[actor] = policy
 
     ## RL only
     training_steps = 0
@@ -122,6 +138,11 @@ def main() -> None:
                 episode=episode + 1,
             )
             training_steps += metrics.steps
+
+    if args.agent == "qlearning" and args.save_qvalues_dir is not None:
+        for actor, policy in policies.items():
+            assert isinstance(policy, QLearningAgent)
+            policy.save_values(args.save_qvalues_dir / f"{actor}.json")
 
     for episode in range(args.episodes):
         evaluation_seed = seed + 1_000_000 + episode

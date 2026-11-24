@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import random
+from pathlib import Path
 from typing import cast
 from src.agents import Decision, Experience, LearningAgent
 from examples.learning import TaskEncoder
@@ -34,6 +36,45 @@ class QLearningAgent(LearningAgent):
 
     def key(self, observation: Observation) -> tuple[int, ...]:
         return tuple(round(4 * value) for value in self.encoder(observation))
+
+    def save_values(self, path: str | Path) -> None:
+        """Save the learned Q-table in a readable, deterministic JSON file."""
+        file = Path(path)
+        file.parent.mkdir(parents=True, exist_ok=True)
+        entries = [
+            {
+                "state": list(state),
+                "action": action,
+                "value": value,
+            }
+            for (state, action), value in sorted(self.values.items())
+        ]
+        payload = {
+            "format": "tabular-q-values-v1",
+            "feature_names": list(self.encoder.feature_names),
+            "observed_transitions": self.observed,
+            "discount_factor": self.discount_factor,
+            "learning_rate": self.learning_rate,
+            "entries": entries,
+        }
+        file.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+    def load_values(self, path: str | Path) -> None:
+        """Load a Q-table previously written by :meth:`save_values`."""
+        file = Path(path)
+        payload = json.loads(file.read_text(encoding="utf-8"))
+        if payload.get("format") != "tabular-q-values-v1":
+            raise ValueError(f"Unsupported Q-value format in {file}")
+        if tuple(payload.get("feature_names", ())) != self.encoder.feature_names:
+            raise ValueError(f"Q-value features in {file} do not match TaskEncoder")
+
+        self.values = {
+            (tuple(int(value) for value in entry["state"]), int(entry["action"])): float(
+                entry["value"]
+            )
+            for entry in payload["entries"]
+        }
+        self.observed = int(payload["observed_transitions"])
 
     '''
     Given a set of observations choses an action to take. When not training greedily slectes the action with

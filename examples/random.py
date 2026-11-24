@@ -59,7 +59,7 @@ class RandomAgent(Agent):
         # Work, Clean, Idle
         probs = [0.5, 0.2, 0.1]
         potential_actions = [Work, Clean, Idle]
-        choice = random.choices(potential_actions, weights=probs, k=1)[0]
+        choice = self.random.choices(potential_actions, weights=probs, k=1)[0]
 
         # Choose the first action whose type matches the one chosen
         for index, action in enumerate(actions):
