@@ -3,13 +3,12 @@
 ## 1. Setup
 
 Use Python 3.11 or newer and run all commands from the repository root, which
-contains `examples/`, `src/` and `pyproject.toml`. The required Python dependency
-is PyYAML. The experiments run on a CPU.
+contains `examples/`, `src/` and `pyproject.toml`. 
 
 With uv, install the project dependencies:
 
 ```bash
-uv sync --locked
+uv sync
 ```
 
 The commands below use `python`. When using the uv environment, prefix them with
