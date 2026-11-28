@@ -139,9 +139,4 @@ class RuleBasedAgent(Agent):
         if clean is not None and room.cleanliness < room.initial_cleanliness:
             return Decision(clean, (state, "N4: authorised maintenance"))
 
-        # N5 POWER and N6 SANCTION are environment-level norms. The environment
-        # decides which actions are available, locks/restores rooms, rejects
-        # invalid actions and applies costs. This policy does not perform those
-        # institutional actions; it uses task_actions and avoids violations.
-
         return Decision(Idle(), (state, "N4: authorised idle"))
