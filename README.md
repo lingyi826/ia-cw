@@ -1,7 +1,5 @@
 # Intelligent Agents Coursework
 
-Rule-based and tabular Q-learning agents for the Eregion Works environment.
-
 ## 1. Setup
 
 Use Python 3.11 or newer and run all commands from the repository root, which
@@ -86,7 +84,7 @@ The command produces:
 - `results/reproduced/evaluation_summary.csv`: means and sample standard
   deviations for each configuration and agent.
 
-The recorded full evaluation took approximately **9 seconds** on the author's
+The recorded full evaluation took approximately **9 seconds** on my
 CPU-only Windows machine, excluding installation and training.
 
 ## 4. Reproducing the figures and tables
@@ -124,7 +122,7 @@ The command saves nine JSON files under `artifacts/qvalues_retrained`, using the
 same mode and worker directory layout as the supplied Q-values. This keeps the
 original policies in `artifacts/qvalues` available for evaluation without training.
 
-Recorded training times on the author's CPU-only Windows machine were:
+Recorded training times on my CPU-only Windows machine were:
 
 | Configuration | Training time |
 |---|---:|
